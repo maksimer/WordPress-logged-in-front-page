@@ -3,7 +3,7 @@
  * Plugin Name: Maksimer, logged in front page
  * Plugin URI: http://www.maksimer.no
  * Description: Adds an option to add a custom front-page for logged in users.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Maksimer AS
  * Author URI: http://www.maksimer.no
  * Text Domain: maksimer_logged_in_front_page
@@ -28,7 +28,9 @@ if ( ! class_exists( 'Maksimer_Logged_In_Front_Page' ) ) :
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 			add_action( 'admin_init' , array( $this , 'register_fields' ) );
 			add_action( 'template_redirect', array( $this, 'redirect_users' ) );
+			add_filter( 'display_post_states', array( $this, 'post_state' ) );
 		}
+
 
 
 
@@ -112,6 +114,22 @@ if ( ! class_exists( 'Maksimer_Logged_In_Front_Page' ) ) :
 			}
 		} // redirect_users()
 
+
+
+
+
+		/*
+		 * Add a label to selected page in the wp-list-table
+		*/
+		public function post_state( $post_states ) {
+			$front_page = get_option( 'maksimer_logged_in_front_page' );
+
+			if ( ( true == $front_page ) && ( $front_page == get_the_id() ) ) {
+				$post_states[] = __( 'Logged in front page' , 'maksimer_logged_in_front_page' );
+			}
+
+			return $post_states;
+		} // post_state()
 	}
 
 	$maksimer_logged_in_front_page = new Maksimer_Logged_In_Front_Page();
